@@ -1,0 +1,72 @@
+.ui-carousel {
+	position: relative;
+}
+
+.ui-carousel-layers {
+	overflow: hidden;
+	white-space: nowrap;
+}
+
+.ui-carousel-layer {
+	display: inline-block;
+}
+
+.ui-carousel-layer img {
+	vertical-align: top;
+}
+
+.ui-carousel-frame {
+	top: 3px;
+	left: 3px;
+	right: 3px;
+	bottom: 3px;
+	opacity: 0.8;
+	position: absolute;
+	border: 2px solid white;
+}
+
+.ui-carousel-button {
+	top: 50%;
+	width: 40px;
+	height: 60px;
+	opacity: 0.8;
+	display: none;
+	cursor: pointer;
+	margin-top: -30px;
+	position: absolute;
+	background-repeat: no-repeat;
+	background-image: url('media/buttons.png');
+}
+
+.ui-carousel-buttonPrev {
+	left: 20px;
+	background-position: left center;
+}
+
+.ui-carousel-buttonNext {
+	right: 20px;
+	background-position: right center;
+}
+
+
+.ui-carousel-dots {
+	display: none;
+	opacity: 0.8;
+	position: absolute; bottom: 20px; text-align: center; left: 0px; right: 0px;
+}
+
+.ui-carousel-dot {
+	cursor: pointer;
+	width: 10px; height: 10px; border: 2px solid white; border-radius: 10px; display: inline-block; margin-right: 10px; margin-left: 10px;
+}
+
+.ui-carousel-dot-active {
+	cursor: default;
+	background-color: white;
+}
+
+
+.ui-carousel:hover .ui-carousel-button,
+.ui-carousel:hover .ui-carousel-dots {
+	display: block;
+}

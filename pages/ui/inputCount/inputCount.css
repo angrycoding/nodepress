@@ -1,0 +1,45 @@
+.ui-inputCount {
+	display: inline-block;
+}
+
+.ui-inputCount.ui-disabled input {
+	color: gray;
+}
+
+.ui-inputCount-dec {
+	cursor: pointer;
+	padding-left: 32px;
+	background-image: url('media/buttons.png');
+	background-repeat: no-repeat;
+	background-position: left 0px;
+}
+
+.ui-inputCount-inc {
+	cursor: pointer;
+	padding-right: 32px;
+	background-image: url('media/buttons.png');
+	background-repeat: no-repeat;
+	background-position: right 0px;
+}
+
+.ui-inputCount-value {
+	border: 0px;
+	width: 43px;
+	cursor: default;
+	text-align: center;
+	line-height: 32px;
+	background-color: transparent;
+}
+
+.ui-inputCount-decDisabled,
+.ui-disabled.ui-inputCount-dec {
+	cursor: default;
+	background-position: left -64px;
+}
+
+.ui-inputCount-incDisabled .ui-inputCount-inc,
+.ui-inputCount.ui-disabled .ui-inputCount-inc {
+	cursor: default;
+	background-position: right -32px;
+}
+

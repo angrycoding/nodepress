@@ -1,0 +1,36 @@
+.ui-modal {
+	display: none;
+	z-index: 3000;
+	position: fixed;
+	top: 0px;
+	bottom: 0px;
+	left: 0px;
+	right: 0px;
+	width: 100%;
+	height: 100%;
+}
+
+.ui-modal-noscroll {
+	overflow: hidden;
+}
+
+.ui-modal-visible {
+	display: table;
+}
+
+.ui-modal-overlay {
+	position: absolute;
+	top: 0px;
+	bottom: 0px;
+	left: 0px;
+	right: 0px;
+	background-color: gray;
+	opacity: 0.5;
+}
+
+.ui-modal-wrapper {
+	position: relative;
+	display: table-cell;
+	text-align: center;
+	vertical-align: middle;
+}

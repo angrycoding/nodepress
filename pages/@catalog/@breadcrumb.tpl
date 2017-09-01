@@ -1,0 +1,1 @@
+{{return require('../@breadcrumb.tpl', this)->toArray + ['Каталог']}}

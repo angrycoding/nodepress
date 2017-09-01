@@ -1,0 +1,25 @@
+.ui-inputRadio {
+	cursor: pointer;
+	display: inline-block;
+	white-space: nowrap;
+}
+
+.ui-inputRadio input {
+	position: fixed;
+	left: -1000px;
+	top: -1000px;
+}
+
+.ui-inputRadio div {
+	height: 26px;
+	font-weight: bold;
+	line-height: 26px;
+	padding-left: 28px;
+	background-repeat: no-repeat;
+	background-position: left top;
+	background-image: url('inputRadio.png');
+}
+
+.ui-inputRadio input:checked + div {
+	background-position: left bottom;
+}

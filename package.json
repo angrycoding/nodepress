@@ -1,0 +1,10 @@
+{
+  "dependencies": {
+    "async": "latest",
+    "body-parser": "latest",
+    "express": "latest",
+    "express-session": "latest",
+    "histone": "latest",
+    "cookie-parser": "latest"
+  }
+}

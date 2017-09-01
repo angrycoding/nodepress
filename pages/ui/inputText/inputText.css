@@ -1,0 +1,86 @@
+.ui-inputText {
+	text-align: left;
+	display: inline-block;
+}
+
+.ui-inputText-label {
+	font-size: 14px;
+	font-weight: bold;
+	margin-bottom: 6px;
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	-o-user-select: none;
+	user-select: none;
+	cursor: default;
+}
+
+.ui-inputText-wrapper {
+	position: relative;
+}
+
+.ui-inputText-star {
+	width: 10px;
+	height: 10px;
+	right: -16px;
+	display: none;
+	margin-top: 1px;
+	position: absolute;
+	background-repeat: no-repeat;
+	background-position: center center;
+	background-image: url('media/star.png');
+}
+
+.ui-inputText-required
+.ui-inputText-star {
+	display: block;
+}
+
+.ui-inputText-errorBorder {
+	display: none;
+	border: 2px solid #FD9A9D;
+	position: absolute;
+	z-index: 1;
+	top: -1px;
+	left: -1px;
+	right: -1px;
+	bottom: -1px;
+	border-radius: 4px
+}
+
+.ui-inputText-error
+.ui-inputText-errorBorder {
+	display: block;
+}
+
+.ui-inputText-inputBorder {
+	overflow: hidden;
+	position: relative;
+	border: 1px solid #aaa;
+	border-radius: 3px;
+	box-shadow: inset 2px 2px 2px 0px #dddddd;
+	background-color: white;
+}
+
+.ui-inputText input {
+	position: relative;
+	z-index: 1;
+	width: 100%;
+	margin: 0px;
+	padding: 0px;
+	border-style: none;
+	background-color: transparent;
+	outline: none;
+	padding: 3px;
+	padding-left: 5px;
+	padding-right: 5px;
+}
+
+.ui-inputText-disabled input {
+	color: gray;
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	-o-user-select: none;
+	user-select: none;
+}

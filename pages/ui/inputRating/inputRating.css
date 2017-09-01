@@ -1,0 +1,23 @@
+.ui-inputRating {
+	display: inline-block;
+}
+
+.ui-inputRating-star {
+	width: 15px;
+	height: 15px;
+	cursor: pointer;
+	margin-right: 4px;
+	position: relative;
+	display: inline-block;
+	background-repeat: no-repeat;
+	background-position: bottom center;
+	background-image: url('media/stars.png');
+}
+
+.ui-inputRating-disabled .ui-inputRating-star {
+	cursor: default;
+}
+
+.ui-inputRating-starChecked {
+	background-position: top center;
+}

@@ -1,0 +1,22 @@
+.ui-inputCheck {
+	display: inline-block;
+	background-repeat: no-repeat;
+	height: 26px;
+	font-size: 13px;
+	font-weight: bold;
+	line-height: 26px;
+	padding-left: 34px;
+	cursor: pointer;
+	background-position: left bottom;
+	background-image: url('media/check.png');
+}
+
+.ui-inputCheck-checked {
+	background-position: left top;
+}
+
+.ui-inputCheck input {
+	position: fixed;
+	left: -1000px;
+	top: -1000px;
+}

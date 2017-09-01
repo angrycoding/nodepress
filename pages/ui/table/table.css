@@ -1,0 +1,83 @@
+.ui-table {
+	width: 100%;
+}
+
+.ui-table-col {
+	cursor: default;
+	position: relative;
+	white-space: nowrap;
+	font-weight: bold; background-color: #E1F1F1; border: 1px solid #DDDDDD; text-align: center; padding: 6px;
+	padding-left: 10px;
+	padding-right: 10px;
+}
+
+.ui-table-col-sortable {
+	padding-left: 30px;
+	padding-right: 30px;
+}
+
+.ui-table-sorter {
+	position: absolute;
+	top: 50%;
+	margin-top: -5px;
+	right: 10px;
+	cursor: pointer;
+	background-color: #464646;
+
+	width: 10px;
+	height: 10px;
+	border-radius: 10px;
+	box-sizing: border-box;
+}
+
+.ui-table-sorter-down {
+	width: 0px;
+	height: 0px;
+	border-radius: 0px;
+	border-style: none;
+	background-color: transparent;
+	border-left: 6px solid transparent;
+	border-right: 6px solid transparent;
+	border-top: 10px solid #464646;
+}
+
+.ui-table-sorter-up {
+	width: 0px;
+	height: 0px;
+	border-radius: 0px;
+	border-style: none;
+	background-color: transparent;
+	border-left: 6px solid transparent;
+	border-right: 6px solid transparent;
+	border-bottom: 10px solid #464646;
+}
+
+
+
+.ui-table td {
+	white-space: nowrap;
+	border: 1px solid #DDDDDD; padding: 6px;
+	padding-left: 10px;
+	padding-right: 10px;
+}
+
+.ui-table-row:hover {
+	background-color: #EDEDED;
+}
+
+.ui-table-row-title {
+	cursor: pointer;
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	-o-user-select: none;
+	user-select: none;
+}
+
+.ui-table-row-contents {
+	display: none;
+}
+
+.ui-table-row-contents-shown {
+	display: table-row;
+}

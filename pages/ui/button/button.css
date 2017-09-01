@@ -1,0 +1,86 @@
+.ui-button {
+	cursor: pointer;
+	display: inline-block;
+	padding-left: 15px;
+	white-space: nowrap;
+	position: relative;
+	text-decoration: none;
+	background-repeat: no-repeat;
+	background-position: left 0px;
+	background-image: url('media/button.png');
+	outline: none;
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	-o-user-select: none;
+	user-select: none;
+}
+
+.ui-button-size-small {
+	padding-left: 10px;
+	background-size: 10px 150px;
+}
+
+.ui-button input {
+	position: fixed;
+	top: -1000px;
+	left: -1000px;
+}
+
+.ui-button-right {
+	padding-right: 15px;
+	background-repeat: no-repeat;
+	background-position: right -74px;
+	background-image: url('media/button.png');
+}
+
+.ui-button-size-small
+.ui-button-right {
+	padding-right: 10px;
+	background-size: 10px 150px;
+	background-position: right -50px;
+}
+
+.ui-button-middle {
+	color: white;
+	font-size: 13px;
+	line-height: 37px;
+	background-repeat: repeat-x;
+	text-shadow: 0px 0px 2px gray;
+	background-position: left -37px;
+	background-image: url('media/button.png');
+}
+
+.ui-button-size-small
+.ui-button-middle {
+	line-height: 25px;
+	font-size: 12px;
+	background-size: 10px 150px;
+	background-position: left -25px;
+}
+
+.ui-button.ui-disabled {
+	cursor: default;
+	background-position: left -111px;
+}
+
+.ui-button.ui-disabled .ui-button-right {
+	background-position: right -185px;
+}
+
+.ui-button.ui-disabled .ui-button-middle {
+	background-position: left -148px;
+}
+
+
+.ui-button.ui-disabled.ui-button-size-small {
+	background-position: left -75px;
+}
+
+.ui-button.ui-disabled.ui-button-size-small .ui-button-right {
+	background-position: right -125px;
+}
+
+.ui-button.ui-disabled.ui-button-size-small .ui-button-middle {
+	background-position: left -100px;
+}
