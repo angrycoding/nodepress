@@ -92,7 +92,9 @@ function compressHTML(fragment, callback) {
 		spawn('java', [
 			'-jar', HTMLCompressorJar,
 			'-t', 'html',
+			'--compress-js',
 			'--remove-intertag-spaces',
+			'--remove-surrounding-spaces', 'script,link,style,html,head,title,meta,body,!DOCTYPE,option',
 			// '--remove-quotes',
 			tmpFileName
 		], callback);
