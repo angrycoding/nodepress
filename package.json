@@ -1,0 +1,8 @@
+{
+  "dependencies": {
+    "fs-extra": "^0.18.2",
+    "shortid": "^2.2.2",
+    "async": "latest",
+    "histone": "latest"
+  }
+}
