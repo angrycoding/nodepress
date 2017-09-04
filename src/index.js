@@ -203,14 +203,21 @@ server.use(function(request, response, next) {
 
 buildProps(pagesDir, function(routes) {
 
-	console.info(routes.map(r => r[0]));
-	return;
+	server.all('/catalog/page:page([1-9][0-9]*)/', function(request, response) {
+		response.end('page');
+	});
 
-	routes.forEach(route => server.all(route[0], handler.bind(this, route[1])));
+	server.all('/catalog/:product([a-zA-Z0-9-]+)/', function(request, response) {
+		response.end('product');
+	});
 
-	server.use(function(request, response) {
-        response.redirect(302, '/error/');
-    });
+	// return;
+
+	// routes.forEach(route => server.all(route[0], handler.bind(this, route[1])));
+
+	// server.use(function(request, response) {
+ //        response.redirect(302, '/error/');
+ //    });
 
 	server.listen(9999);
 
