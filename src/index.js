@@ -131,15 +131,14 @@ function buildProps(path, retn, retf) {
 
 			}, function(error) {
 
-				var xProps = {};
-				for (var key in props)
-					xProps[key] = props[key];
+				// var xProps = {};
+				// for (var key in props) xProps[key] = props[key];
 
 				if (Path.basename(path)[0] === '@' || path.length === startPathLen)
-					retn(dirPathToRoute(path) + '/', xProps);
+					retn(dirPathToRoute(path) + '/', Object.assign({}, props));
 
 				Async.each(dirs.sort((a, b) => b.indexOf('$') - a.indexOf('$')), function(dir, next) {
-					buildProps(dir, next, Object.assign({}, xProps));
+					buildProps(dir, next, Object.assign({}, props));
 				}, ret);
 
 			});
