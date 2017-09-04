@@ -96,8 +96,7 @@ function buildProps(path, retn, retf) {
 	var dirPathToRoute = function(path) {
 		var result = filePathToURL(path);
 		result = result.replace(/@/g, '');
-		result = result.replace(/~/g, ':');
-		console.info(result)
+		result = result.replace(/\$([a-z]+)/, (a, b) => ':' + b + '([a-zA-Z0-9-]+)');
 		return result;
 	};
 
@@ -132,11 +131,15 @@ function buildProps(path, retn, retf) {
 
 			}, function(error) {
 
+				var xProps = {};
+				for (var key in props)
+					xProps[key] = props[key];
+
 				if (Path.basename(path)[0] === '@' || path.length === startPathLen)
-					retn(dirPathToRoute(path) + '/', props);
+					retn(dirPathToRoute(path) + '/', xProps);
 
 				Async.each(dirs, function(dir, next) {
-					buildProps(dir, next, Object.assign({}, props));
+					buildProps(dir, next, Object.assign({}, xProps));
 				}, ret);
 
 			});

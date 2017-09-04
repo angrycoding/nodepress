@@ -1,5 +1,6 @@
 {{macro breadcrumb(items)}}
 	{{resource('breadcrumb.css')}}
+	{{items->toJSON}}
 	{{var length = items->length}}
 	<div class="ui-breadcrumb">
 		{{for title in items}}
