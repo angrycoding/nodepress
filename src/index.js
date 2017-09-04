@@ -9,6 +9,7 @@ var Session = require('express-session');
 var CookieParser = require('cookie-parser');
 var server = Express();
 var pagesDir = Path.resolve(__dirname, 'pages');
+var Preferences = require('./preferences.js');
 
 
 server.use(Session({
@@ -85,9 +86,10 @@ function handler(pageData, request, response, next) {
 }
 
 
-function buildProps(path, retn, retf) {
+function buildProps(path, retf) {
 
 	var startPathLen = path.length;
+	var routes = [];
 
 	var filePathToURL = function(path) {
 		return path.slice(startPathLen);
@@ -96,7 +98,19 @@ function buildProps(path, retn, retf) {
 	var dirPathToRoute = function(path) {
 		var result = filePathToURL(path);
 		result = result.replace(/@/g, '');
-		result = result.replace(/\$([a-z]+)/, (a, b) => ':' + b + '([a-zA-Z0-9-]+)');
+		result = result.replace(/\$([a-z]+)(?:\=([a-zA-Z]*))?/, function(source, name, type) {
+
+			if (Preferences.urlParamConverters.hasOwnProperty(type)) {
+				return ':' + name + '(' + Preferences.urlParamConverters[type] + ')';
+			}
+
+			else return ':' + name + '([a-zA-Z0-9-]+)';
+
+
+		});
+
+		console.info(result)
+
 		return result;
 	};
 
@@ -135,9 +149,9 @@ function buildProps(path, retn, retf) {
 				// for (var key in props) xProps[key] = props[key];
 
 				if (Path.basename(path)[0] === '@' || path.length === startPathLen)
-					retn(dirPathToRoute(path) + '/', Object.assign({}, props));
+					routes.push([dirPathToRoute(path) + '/', Object.assign({}, props)]);
 
-				Async.each(dirs.sort((a, b) => b.indexOf('$') - a.indexOf('$')), function(dir, next) {
+				Async.each(dirs, function(dir, next) {
 					buildProps(dir, next, Object.assign({}, props));
 				}, ret);
 
@@ -148,7 +162,11 @@ function buildProps(path, retn, retf) {
 	}
 
 
-	buildProps(path, retf);
+	buildProps(path, function() {
+		retf(routes.sort(function(a, b) {
+			return b[0].indexOf(':') - a[0].indexOf(':');
+		}));
+	});
 
 }
 
@@ -183,11 +201,12 @@ server.use(function(request, response, next) {
 });
 
 
-buildProps(pagesDir, function(route, props) {
+buildProps(pagesDir, function(routes) {
 
-	server.all(route, handler.bind(this, props));
+	console.info(routes.map(r => r[0]));
+	return;
 
-}, function() {
+	routes.forEach(route => server.all(route[0], handler.bind(this, route[1])));
 
 	server.use(function(request, response) {
         response.redirect(302, '/error/');
