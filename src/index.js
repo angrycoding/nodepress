@@ -138,7 +138,7 @@ function buildProps(path, retn, retf) {
 				if (Path.basename(path)[0] === '@' || path.length === startPathLen)
 					retn(dirPathToRoute(path) + '/', xProps);
 
-				Async.each(dirs, function(dir, next) {
+				Async.each(dirs.sort((a, b) => b.indexOf('$') - a.indexOf('$')), function(dir, next) {
 					buildProps(dir, next, Object.assign({}, xProps));
 				}, ret);
 
