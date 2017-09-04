@@ -9,7 +9,9 @@ var Session = require('express-session');
 var CookieParser = require('cookie-parser');
 var server = Express();
 var pagesDir = Path.resolve(__dirname, 'pages');
-var Preferences = require('./preferences.js');
+var router = new (require('./URLRouter/URLRouter.js'))({
+	pageNumber: '[1-9][0-9]*'
+});
 
 
 server.use(Session({
@@ -35,7 +37,7 @@ Histone.setResourceLoader(function(uri, ret) {
 
 	// ресолвим путь и забираем из файловой системы
 	var fPath = pagesDir + uri;
-	console.info(fPath)
+	// console.info(fPath)
 	FS.readFile(fPath, 'UTF-8', function(error, result) {
 		ret(result);
 	});
@@ -60,8 +62,8 @@ function handler(pageData, request, response, next) {
 	// console.info(pageData)
 
 	var x = {};
-	for (var key in pageData) {
-		x[key] = URL.resolve(request.url, pageData[key]);
+	for (var key in pageData.data) {
+		x[key] = URL.resolve(request.url, pageData.data[key]);
 	}
 
 	if (request.session.postData) {
@@ -71,11 +73,14 @@ function handler(pageData, request, response, next) {
     }
 
 
+    x.params = pageData.params;
+
+
 	// if (x.contentType) {
 	// 	console.info(FS.readFileSync(x.contentType, 'UTF-8'));
 	// }
 
-	x.params = request.params;
+	// x.params = request.params;
 	// console.info(request.params)
 	// response.end(JSON.stringify(x))
 
@@ -98,18 +103,8 @@ function buildProps(path, retf) {
 	var dirPathToRoute = function(path) {
 		var result = filePathToURL(path);
 		result = result.replace(/@/g, '');
-		result = result.replace(/\$([a-z]+)(?:\=([a-zA-Z]*))?/, function(source, name, type) {
-
-			if (Preferences.urlParamConverters.hasOwnProperty(type)) {
-				return ':' + name + '(' + Preferences.urlParamConverters[type] + ')';
-			}
-
-			else return ':' + name + '([a-zA-Z0-9-]+)';
 
 
-		});
-
-		console.info(result)
 
 		return result;
 	};
@@ -123,13 +118,13 @@ function buildProps(path, retf) {
 			var dirs = [];
 
 			Async.each(files, function(fileName, next) {
-				
+
 				if (fileName[0] === '.') return next();
 
 				var filePath = Path.resolve(path, fileName);
 
 				FS.lstat(filePath, function(error, stat) {
-					
+
 					if (!stat.isDirectory()) {
 						if (fileName[0] === '@') {
 							props[Path.basename(filePath, Path.extname(filePath)).slice(1)] = filePathToURL(filePath);
@@ -145,8 +140,8 @@ function buildProps(path, retf) {
 
 			}, function(error) {
 
-				// var xProps = {};
-				// for (var key in props) xProps[key] = props[key];
+				var xProps = {};
+				for (var key in props) xProps[key] = props[key];
 
 				if (Path.basename(path)[0] === '@' || path.length === startPathLen)
 					routes.push([dirPathToRoute(path) + '/', Object.assign({}, props)]);
@@ -163,9 +158,7 @@ function buildProps(path, retf) {
 
 
 	buildProps(path, function() {
-		retf(routes.sort(function(a, b) {
-			return b[0].indexOf(':') - a[0].indexOf(':');
-		}));
+		retf(routes);
 	});
 
 }
@@ -175,7 +168,7 @@ server.use(Express.static('pages'))
 
 
 server.use(function(request, response, next) {
-	
+
 	var oldURL = request.url, newURL = URL.parse(oldURL);
 	if (newURL.pathname.slice(-1) !== '/') newURL.pathname += '/';
 	newURL.pathname = newURL.pathname.toLowerCase().replace(/\/\//g, '/');
@@ -195,7 +188,7 @@ server.use(function(request, response, next) {
 	}
 
 	else if (oldURL === newURL) next();
-	
+
 	else response.redirect(302, newURL);
 
 });
@@ -203,21 +196,30 @@ server.use(function(request, response, next) {
 
 buildProps(pagesDir, function(routes) {
 
-	server.all('/catalog/page:page([1-9][0-9]*)/', function(request, response) {
-		response.end('page');
+
+	routes.forEach(function(route) {
+
+		router.add(route[0], route[1])
+
+
+	});
+	router.build();
+
+	server.use(function(request, response, next) {
+		// console.info(request.path)
+		var route = router.get(request.path);
+		// console.info(route)
+		if (route) {
+			// response.end(JSON.stringify(route));
+			// return;
+			handler(route, request, response, next);
+		}
+		else next();
 	});
 
-	server.all('/catalog/:product([a-zA-Z0-9-]+)/', function(request, response) {
-		response.end('product');
+	server.use(function(request, response) {
+		response.redirect(302, '/error/');
 	});
-
-	// return;
-
-	// routes.forEach(route => server.all(route[0], handler.bind(this, route[1])));
-
-	// server.use(function(request, response) {
- //        response.redirect(302, '/error/');
- //    });
 
 	server.listen(9999);
 

@@ -56,7 +56,7 @@
 						label: 'Введите имя',
 						name: 'name'
 					])}}
-					
+
 					{{ui.textArea([
 						label: 'Введите сообщение',
 						name: 'message'
