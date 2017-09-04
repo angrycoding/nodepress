@@ -93,10 +93,11 @@ function buildProps(path, retn, retf) {
 		return path.slice(startPathLen);
 	};
 
-	var filePathToRoute = function(path) {
+	var dirPathToRoute = function(path) {
 		var result = filePathToURL(path);
 		result = result.replace(/@/g, '');
-		result = result.replace(/\$([a-z]+)/g, ':$1([$a-zA-Z-_0-9]+)');
+		result = result.replace(/~/g, ':');
+		console.info(result)
 		return result;
 	};
 
@@ -132,7 +133,7 @@ function buildProps(path, retn, retf) {
 			}, function(error) {
 
 				if (Path.basename(path)[0] === '@' || path.length === startPathLen)
-					retn(filePathToRoute(path) + '/', props);
+					retn(dirPathToRoute(path) + '/', props);
 
 				Async.each(dirs, function(dir, next) {
 					buildProps(dir, next, Object.assign({}, props));
@@ -190,6 +191,6 @@ buildProps(pagesDir, function(route, props) {
         response.redirect(302, '/error/');
     });
 
-	server.listen(8443);
+	server.listen(9999);
 
 });
