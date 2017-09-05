@@ -230,7 +230,7 @@ function add(path, data) {
 }
 
 function match(path) {
-	
+
 	if (CACHE.hasOwnProperty(path))
 		return CACHE[path];
 

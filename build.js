@@ -25,8 +25,13 @@ function compressCSS(callback) {
 	Utils.findFilesByMask(DIST_PATH, 'css', function(CSSPath, next) {
 		console.info('[ COMPRESSING CSS ]', CSSPath);
 		FS.readFile(CSSPath, 'UTF-8', function(error, data) {
-			Utils.compressCSS(data, function(error, data) {
-				FS.writeFile(CSSPath, data, next);
+			if (error) callback(error);
+			else Utils.compressCSS(data, function(error, data) {
+				if (error) callback(error);
+				else FS.writeFile(CSSPath, data, function(error) {
+					if (error) callback(error);
+					else next();
+				});
 			});
 		});
 	}, callback);
@@ -37,7 +42,8 @@ function compressPNG(callback) {
 		console.info('[ COMPRESSING PNG ]', PNGPath);
 		Utils.compressPNG(PNGPath, function(error, data) {
 			console.info('[ COMPRESSING PNG ]', data.split('\n').shift());
-			next();
+			if (error) callback(error);
+			else next();
 		});
 	}, callback);
 }
@@ -46,8 +52,13 @@ function compressJS(callback) {
 	Utils.findFilesByMask(DIST_PATH, 'js', function(JSPath, next) {
 		console.info('[ COMPRESSING JS ]', JSPath);
 		FS.readFile(JSPath, 'UTF-8', function(error, data) {
-			Utils.compressJS(data, function(error, data) {
-				FS.writeFile(JSPath, data, next);
+			if (error) callback(error);
+			else Utils.compressJS(data, function(error, data) {
+				if (error) callback(error);
+				else FS.writeFile(JSPath, data, function(error) {
+					if (error) callback(error);
+					else next();
+				});
 			});
 		});
 	}, callback, [], 1);
@@ -57,10 +68,17 @@ function compressTPL(callback) {
 	Utils.findFilesByMask(DIST_PATH, 'tpl', function(tplPath, next) {
 		console.info('[ COMPRESSING TPL ]', tplPath);
 		FS.readFile(tplPath, 'UTF-8', function(error, data) {
-			Utils.compressHTML(data, function(error, data) {
-				data = Histone(data).getAST();
-				data = JSON.stringify(data);
-				FS.writeFile(tplPath, data, next);
+			if (error) callback(error);
+			else Utils.compressHTML(data, function(error, data) {
+				if (error) callback(error);
+				else {
+					data = Histone(data).getAST();
+					data = JSON.stringify(data);
+					FS.writeFile(tplPath, data, function(error) {
+						if (error) callback(error);
+						else next();
+					});
+				}
 			});
 		});
 	}, callback);
@@ -69,7 +87,7 @@ function compressTPL(callback) {
 prepareDist(function() {
 	Async.each([compressCSS, compressPNG, compressTPL, compressJS], function(task, nextTask) {
 		task(nextTask);
-	}, function() {
-		console.info('done');
+	}, function(error) {
+		console.info('done', error);
 	});
 });
