@@ -11,6 +11,13 @@ var server = Express();
 var pagesDir = Path.resolve(__dirname, 'pages');
 
 
+
+if (process.env.NODE_ENV !== 'production') {
+	server.use(Express.static('pages'));
+}
+
+
+
 var Router = require('./Router');
 
 
@@ -162,9 +169,6 @@ function buildProps(path, retf) {
 	buildProps(path, retf);
 
 }
-
-
-server.use(Express.static('pages'))
 
 
 server.use(function(request, response, next) {

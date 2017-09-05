@@ -5,7 +5,6 @@
     "cookie-parser": "latest",
     "express": "latest",
     "express-session": "latest",
-    "histone": "latest",
-    "regexp-lexer": "0.0.10"
+    "histone": "latest"
   }
 }
