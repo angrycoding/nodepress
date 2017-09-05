@@ -6,5 +6,8 @@
     "express": "latest",
     "express-session": "latest",
     "histone": "latest"
+  },
+  "devDependencies": {
+    "chokidar": "latest"
   }
 }
