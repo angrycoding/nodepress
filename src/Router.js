@@ -1,5 +1,6 @@
 var NFA;
 var ROUTES = [];
+var LAST_GID = 0;
 var CACHE = {};
 
 var AST_CHAR = 1;
@@ -8,7 +9,6 @@ var AST_GROUP = 3;
 var AST_CONCAT = 4;
 var AST_REPEAT = 5;
 var AST_ALTERNATE = 6;
-var LAST_GID = 0;
 
 function processChar(code, fromState, toState) {
 	if (!NFA[fromState]) NFA[fromState] = [];
@@ -99,9 +99,9 @@ function processOperator(operator, fromState, toState) {
 	}
 }
 
-function build(expressions) {
-	LAST_GID = 0, NFA = [];
-	ROUTES = ROUTES.sort((a, b) => b.order - a.order);
+function build() {
+	LAST_GID = 0, NFA = [], CACHE = {};
+	ROUTES = ROUTES.sort((routeA, routeB) => routeB.order - routeA.order);
 	ROUTES.forEach((route, index) => processOperator(route.ast, 0, (-index - 1)));
 }
 
@@ -185,8 +185,6 @@ function get(input) {
 	}
 }
 
-
-
 function add(path, data) {
 
 	var re = /\$[a-z]+/g;
@@ -236,18 +234,18 @@ function match(path) {
 	if (CACHE.hasOwnProperty(path))
 		return CACHE[path];
 
-	var acceptState = get(path);
-	if (acceptState === undefined) return;
-	var match = ROUTES[acceptState];
+	var result = get(path);
+	if (result === undefined) return;
+	result = ROUTES[result];
 
 
 	var params = {};
-	var matches = new RegExp(match.exp).exec(path);
+	var matches = new RegExp(result.exp).exec(path);
 	for (var c = 1; c < matches.length; c++) {
-		params[match.names[c - 1]] = matches[c];
+		params[result.names[c - 1]] = matches[c];
 	}
 
-	return CACHE[path] = {params: params, data: match.data};
+	return CACHE[path] = {params: params, data: result.data};
 }
 
 module.exports = {

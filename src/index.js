@@ -199,12 +199,8 @@ buildProps(pagesDir, function() {
 	Router.build();
 
 	server.use(function(request, response, next) {
-		// console.info(request.path)
 		var route = Router.match(request.path);
-		// console.info(route)
 		if (route) {
-			// response.end(JSON.stringify(route));
-			// return;
 			handler(route, request, response, next);
 		}
 		else next();
