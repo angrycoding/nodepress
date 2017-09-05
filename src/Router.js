@@ -110,7 +110,6 @@ function build() {
 	NFA = [];
 	CACHE = {};
 	LAST_GID = 0;
-	ROUTES = ROUTES.sort((routeA, routeB) => routeB.order - routeA.order);
 	ROUTES.forEach((route, index) => processOperator(route.ast, 0, (-index - 1)));
 }
 
@@ -188,9 +187,7 @@ function get(input) {
 	}
 
 	if (acceptState.length) {
-		acceptState = acceptState.sort();
-		acceptState = acceptState[0];
-		return Math.abs(acceptState) - 1;
+		return acceptState.map(state => Math.abs(state) - 1);
 	}
 }
 
@@ -244,9 +241,9 @@ function match(path) {
 		return CACHE[path];
 
 	var result = get(path);
-	if (result === undefined) return;
-	result = ROUTES[result];
-
+	if (!result) return;
+	result = result.sort((a, b) => ROUTES[b].order - ROUTES[a].order);
+	result = ROUTES[result[0]];
 
 	var params = {};
 	var matches = new RegExp(result.exp).exec(path);
