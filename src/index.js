@@ -7,6 +7,7 @@ var Histone = require('Histone');
 var BodyParser = require('body-parser');
 var Session = require('express-session');
 var CookieParser = require('cookie-parser');
+var Router = require('./Router');
 var server = Express();
 var pagesDir = Path.resolve(__dirname, 'pages');
 
@@ -14,11 +15,19 @@ var pagesDir = Path.resolve(__dirname, 'pages');
 
 if (process.env.NODE_ENV !== 'production') {
 	server.use(Express.static('pages'));
+
+	require('chokidar').watch('**/*', {
+		cwd: pagesDir,
+		ignored: /(^|[\/\\])\../,
+		ignoreInitial: true
+	})
+
+	.on('all', () => startup(Histone.clearCache));
+
 }
 
 
 
-var Router = require('./Router');
 
 
 
@@ -41,7 +50,7 @@ server.use(BodyParser.urlencoded({
 
 server.use(CookieParser('sdafdsf'));
 
-Histone.setCache(false);
+Histone.setCache(true);
 
 Histone.setResourceLoader(function(uri, ret) {
 	console.info('[ HISTONE ]', uri);
@@ -171,6 +180,17 @@ function buildProps(path, retf) {
 }
 
 
+function startup(ret) {
+	Router.clear();
+	buildProps(pagesDir, function() {
+		Router.build();
+		if (ret) ret();
+	});
+}
+
+
+
+
 server.use(function(request, response, next) {
 
 	var oldURL = request.url, newURL = URL.parse(oldURL);
@@ -197,23 +217,15 @@ server.use(function(request, response, next) {
 
 });
 
-
-buildProps(pagesDir, function() {
-
-	Router.build();
-
-	server.use(function(request, response, next) {
-		var route = Router.match(request.path);
-		if (route) {
-			handler(route, request, response, next);
-		}
-		else next();
-	});
-
-	server.use(function(request, response) {
-		response.redirect(302, '/error/');
-	});
-
-	server.listen(9999);
-
+server.use(function(request, response, next) {
+	var route = Router.match(request.path);
+	if (route) handler(route, request, response, next);
+	else next();
 });
+
+server.use(function(request, response) {
+	response.redirect(302, '/error/');
+});
+
+
+startup(() => server.listen(9999));

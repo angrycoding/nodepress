@@ -99,8 +99,17 @@ function processOperator(operator, fromState, toState) {
 	}
 }
 
+function clear() {
+	NFA = [];
+	CACHE = {};
+	LAST_GID = 0;
+	ROUTES = [];
+}
+
 function build() {
-	LAST_GID = 0, NFA = [], CACHE = {};
+	NFA = [];
+	CACHE = {};
+	LAST_GID = 0;
 	ROUTES = ROUTES.sort((routeA, routeB) => routeB.order - routeA.order);
 	ROUTES.forEach((route, index) => processOperator(route.ast, 0, (-index - 1)));
 }
@@ -250,6 +259,7 @@ function match(path) {
 
 module.exports = {
 	add: add,
+	clear: clear,
 	build: build,
 	match: match
 };
