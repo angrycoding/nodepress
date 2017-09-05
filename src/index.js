@@ -9,9 +9,14 @@ var Session = require('express-session');
 var CookieParser = require('cookie-parser');
 var server = Express();
 var pagesDir = Path.resolve(__dirname, 'pages');
-var router = new (require('./URLRouter/URLRouter.js'))({
-	pageNumber: '[1-9][0-9]*'
-});
+
+
+var Router = require('./Router');
+
+
+
+
+
 
 
 server.use(Session({
@@ -94,7 +99,6 @@ function handler(pageData, request, response, next) {
 function buildProps(path, retf) {
 
 	var startPathLen = path.length;
-	var routes = [];
 
 	var filePathToURL = function(path) {
 		return path.slice(startPathLen);
@@ -103,9 +107,6 @@ function buildProps(path, retf) {
 	var dirPathToRoute = function(path) {
 		var result = filePathToURL(path);
 		result = result.replace(/@/g, '');
-
-
-
 		return result;
 	};
 
@@ -143,8 +144,9 @@ function buildProps(path, retf) {
 				var xProps = {};
 				for (var key in props) xProps[key] = props[key];
 
-				if (Path.basename(path)[0] === '@' || path.length === startPathLen)
-					routes.push([dirPathToRoute(path) + '/', Object.assign({}, props)]);
+				if (Path.basename(path)[0] === '@' || path.length === startPathLen) {
+					Router.add(dirPathToRoute(path) + '/', Object.assign({}, props));
+				}
 
 				Async.each(dirs, function(dir, next) {
 					buildProps(dir, next, Object.assign({}, props));
@@ -157,9 +159,7 @@ function buildProps(path, retf) {
 	}
 
 
-	buildProps(path, function() {
-		retf(routes);
-	});
+	buildProps(path, retf);
 
 }
 
@@ -194,20 +194,13 @@ server.use(function(request, response, next) {
 });
 
 
-buildProps(pagesDir, function(routes) {
+buildProps(pagesDir, function() {
 
-
-	routes.forEach(function(route) {
-
-		router.add(route[0], route[1])
-
-
-	});
-	router.build();
+	Router.build();
 
 	server.use(function(request, response, next) {
 		// console.info(request.path)
-		var route = router.get(request.path);
+		var route = Router.match(request.path);
 		// console.info(route)
 		if (route) {
 			// response.end(JSON.stringify(route));

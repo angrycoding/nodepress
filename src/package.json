@@ -2,9 +2,10 @@
   "dependencies": {
     "async": "latest",
     "body-parser": "latest",
+    "cookie-parser": "latest",
     "express": "latest",
     "express-session": "latest",
     "histone": "latest",
-    "cookie-parser": "latest"
+    "regexp-lexer": "0.0.10"
   }
 }
