@@ -248,7 +248,15 @@ function match(path) {
 	var params = {};
 	var matches = new RegExp(result.exp).exec(path);
 	for (var c = 1; c < matches.length; c++) {
-		params[result.names[c - 1]] = matches[c];
+		var pName = result.names[c - 1];
+
+		if (params.hasOwnProperty(pName)) {
+			if (!(params[pName] instanceof Array))
+				params[pName] = [params[pName]];
+			params[pName].push(matches[c]);
+		}
+
+		else params[pName] = matches[c];
 	}
 
 	return CACHE[path] = {params: params, data: result.data};
