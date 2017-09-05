@@ -15,15 +15,11 @@ var pagesDir = Path.resolve(__dirname, 'pages');
 
 if (process.env.NODE_ENV !== 'production') {
 	server.use(Express.static('pages'));
-
 	require('chokidar').watch('**/*', {
 		cwd: pagesDir,
 		ignored: /(^|[\/\\])\../,
 		ignoreInitial: true
-	})
-
-	.on('all', () => startup(Histone.clearCache));
-
+	}).on('all', () => startup(Histone.clearCache));
 }
 
 
