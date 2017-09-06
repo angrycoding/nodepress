@@ -9,17 +9,17 @@ var Session = require('express-session');
 var CookieParser = require('cookie-parser');
 var Router = require('./Router');
 var server = Express();
-var pagesDir = Path.resolve(__dirname, 'pages');
+var PAGES_DIR = Path.resolve(__dirname, 'pages');
 
 
 
 if (process.env.NODE_ENV !== 'production') {
 	server.use(Express.static('pages'));
 	require('chokidar').watch('**/*', {
-		cwd: pagesDir,
+		cwd: PAGES_DIR,
 		ignored: /(^|[\/\\])\../,
 		ignoreInitial: true
-	}).on('all', () => startup(Histone.clearCache));
+	}).on('all', () => buildRoutes(Histone.clearCache));
 }
 
 
@@ -53,7 +53,7 @@ Histone.setResourceLoader(function(uri, ret) {
 
 
 	// ресолвим путь и забираем из файловой системы
-	var fPath = pagesDir + uri;
+	var fPath = PAGES_DIR + uri;
 	// console.info(fPath)
 	FS.readFile(fPath, 'UTF-8', function(error, result) {
 		ret(result);
@@ -74,7 +74,7 @@ Histone.register(Histone.Global.prototype, 'resource', function(self, args, scop
 
 
 
-function handler(pageData, request, response, next) {
+function requestHandler(pageData, request, response, next) {
 
 	// console.info(pageData)
 
@@ -108,21 +108,12 @@ function handler(pageData, request, response, next) {
 }
 
 
-function buildProps(path, retf) {
 
-	var startPathLen = path.length;
+function buildRoutes(ret) {
 
-	var filePathToURL = function(path) {
-		return path.slice(startPathLen);
-	};
+	var startPathLen = PAGES_DIR.length;
 
-	var dirPathToRoute = function(path) {
-		var result = filePathToURL(path);
-		result = result.replace(/@/g, '');
-		return result;
-	};
-
-	function buildProps(path, ret, props) {
+	function doBuild(path, ret, props) {
 
 		if (!props) props = {};
 
@@ -138,14 +129,13 @@ function buildProps(path, retf) {
 
 				FS.lstat(filePath, function(error, stat) {
 
-					if (!stat.isDirectory()) {
-						if (fileName[0] === '@') {
-							props[Path.basename(filePath, Path.extname(filePath)).slice(1)] = filePathToURL(filePath);
-						}
+					if (stat.isDirectory()) {
+						dirs.push(filePath);
 					}
 
-
-					else dirs.push(filePath);
+					else if (fileName[0] === '@') {
+						props[Path.basename(filePath, Path.extname(filePath)).slice(1)] = filePath.slice(startPathLen);
+					}
 
 
 					next();
@@ -153,15 +143,13 @@ function buildProps(path, retf) {
 
 			}, function(error) {
 
-				var xProps = {};
-				for (var key in props) xProps[key] = props[key];
 
 				if (Path.basename(path)[0] === '@' || path.length === startPathLen) {
-					Router.add(dirPathToRoute(path) + '/', Object.assign({}, props));
+					Router.add(path.slice(startPathLen).replace(/@/g, '') + '/', props);
 				}
 
 				Async.each(dirs, function(dir, next) {
-					buildProps(dir, next, Object.assign({}, props));
+					doBuild(dir, next, Object.assign({}, props));
 				}, ret);
 
 			});
@@ -170,20 +158,13 @@ function buildProps(path, retf) {
 
 	}
 
-
-	buildProps(path, retf);
-
-}
-
-
-function startup(ret) {
 	Router.clear();
-	buildProps(pagesDir, function() {
+	doBuild(PAGES_DIR, function() {
 		Router.build();
 		if (ret) ret();
 	});
-}
 
+}
 
 
 
@@ -215,7 +196,7 @@ server.use(function(request, response, next) {
 
 server.use(function(request, response, next) {
 	var route = Router.match(request.path);
-	if (route) handler(route, request, response, next);
+	if (route) requestHandler(route, request, response, next);
 	else next();
 });
 
@@ -224,4 +205,4 @@ server.use(function(request, response) {
 });
 
 
-startup(() => server.listen(9999));
+buildRoutes(() => server.listen(9999));
