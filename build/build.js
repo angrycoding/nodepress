@@ -3,9 +3,10 @@ var FS = require('fs-extra');
 var Async = require('async');
 var Unirest = require('unirest');
 var Histone = require('histone');
-var Utils = require('./build/Utils');
-var SRC_PATH = Path.resolve(__dirname, 'src');
-var DIST_PATH = Path.resolve(__dirname, 'dist');
+var Utils = require('./Utils');
+var SRC_PATH = Path.resolve(__dirname, '../src');
+var DIST_PATH = Path.resolve(__dirname, '../dist');
+var TGZ_PATH = Path.resolve(__dirname, '../dist.tgz');
 
 function prepareDist(ret) {
 	console.info('[ PREPARE ]', 'removing', DIST_PATH);
@@ -88,6 +89,15 @@ function compressTPL(callback) {
 
 
 
+Unirest.post('http://localhost:10000')
+// // unirest.post('http://127.0.0.1:9999')
+.attach('file', TGZ_PATH)
+.end(function (response) {
+    console.log(response.body);
+});
+
+return
+
 prepareDist(function() {
 	Async.each([compressCSS, compressPNG, compressTPL, compressJS], function(task, nextTask) {
 		task(nextTask);
@@ -95,7 +105,7 @@ prepareDist(function() {
 
 		console.info('done', error);
 
-		Utils.compressDir(DIST_PATH, Path.resolve(__dirname, 'dist.tgz'), 'PASSWORD', function(error) {
+		Utils.compressDir(DIST_PATH, TGZ_PATH, 'PASSWORD', function(error) {
 			console.info('done', error);
 		});
 

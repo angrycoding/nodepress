@@ -1,0 +1,10 @@
+{
+  "dependencies": {
+    "tar": "latest",
+    "express": "latest",
+    "file-encryptor": "latest",
+    "fs-extra": "latest",
+    "multer": "^0.1.8",
+    "shortid": "latest"
+  }
+}
