@@ -12,6 +12,9 @@ var server = Express();
 var PAGES_DIR = Path.resolve(__dirname, 'pages');
 
 
+// при такой схеме роутов невозможно сделать бесконечный путь
+
+
 
 if (process.env.NODE_ENV !== 'production') {
 	server.use(Express.static('pages'));
@@ -120,6 +123,7 @@ function buildRoutes(ret) {
 		FS.readdir(path, function(error, files) {
 
 			var dirs = [];
+			var symlinks = [];
 
 			Async.each(files, function(fileName, next) {
 
@@ -130,6 +134,10 @@ function buildRoutes(ret) {
 				FS.lstat(filePath, function(error, stat) {
 
 					if (stat.isDirectory()) {
+						dirs.push(filePath);
+					}
+
+					else if (stat.isSymbolicLink()) {
 						dirs.push(filePath);
 					}
 
@@ -145,8 +153,18 @@ function buildRoutes(ret) {
 
 
 				if (Path.basename(path)[0] === '@' || path.length === startPathLen) {
-					Router.add(path.slice(startPathLen).replace(/@/g, '') + '/', props);
+					
+					var foo = path.slice(startPathLen).replace(/@/g, '') + '/';
+					foo = foo.replace(/:/g, '/');
+					// console.info(foo)
+
+					Router.add(foo, props);
 				}
+
+				// if (symlinks.length) {
+				// 	console.info(symlinks)
+				// 	throw 'x';
+				// }
 
 				Async.each(dirs, function(dir, next) {
 					doBuild(dir, next, Object.assign({}, props));

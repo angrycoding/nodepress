@@ -1,8 +1,10 @@
 {
   "dependencies": {
-    "fs-extra": "^0.18.2",
-    "shortid": "^2.2.2",
+    "fs-extra": "latest",
+    "shortid": "latest",
     "async": "latest",
-    "histone": "latest"
+    "histone": "latest",
+    "file-encryptor": "latest",
+    "unirest": "latest"
   }
 }

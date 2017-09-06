@@ -1,6 +1,7 @@
 var Path = require('path');
 var FS = require('fs-extra');
 var Async = require('async');
+var Unirest = require('unirest');
 var Histone = require('histone');
 var Utils = require('./build/Utils');
 var SRC_PATH = Path.resolve(__dirname, 'src');
