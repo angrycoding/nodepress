@@ -85,10 +85,20 @@ function compressTPL(callback) {
 	}, callback);
 }
 
+
+
+
 prepareDist(function() {
 	Async.each([compressCSS, compressPNG, compressTPL, compressJS], function(task, nextTask) {
 		task(nextTask);
 	}, function(error) {
+
 		console.info('done', error);
+
+		Utils.compressDir(DIST_PATH, Path.resolve(__dirname, 'dist.tgz'), 'PASSWORD', function(error) {
+			console.info('done', error);
+		});
+
+
 	});
 });
