@@ -1,8 +1,10 @@
 var FS = require('fs');
 var OS = require('os');
+var TAR = require('tar');
 var Async = require('async');
 var Path = require('path');
 var ShortId = require('shortid');
+var Encryptor = require('file-encryptor');
 var spawnFile = require('child_process').spawn;
 
 var YUICompressorJar = Path.resolve(__dirname, 'java/yuicompressor-2.4.8.jar');
@@ -111,13 +113,31 @@ function compressPNG(PNGPath, callback) {
 	], callback);
 }
 
-// function tarDirectory(src, target, key, ret) {
-// 	var temp = Path.resolve(OS.tmpdir(), ShortId.generate());
-// 	spawn('tar', ['czvf', temp, '.'], function(error) {
-// 		if (error) return ret(error);
-// 		Encryptor.encryptFile(temp, target, key, ret);
-// 	}, src);
-// }
+function compressDir(src, target, key, ret) {
+	var temp = Path.resolve(OS.tmpdir(), ShortId.generate());
+	FS.readdir(src, function(error, files) {
+		if (error) return ret(error);
+		TAR.create({
+			gzip: true,
+			cwd: src,
+			file: temp
+		}, files, function(error) {
+			if (error) return ret(error);
+			Encryptor.encryptFile(temp, target, key, ret);
+		});
+	});
+}
+
+function uncompressDir(src, target, key, ret) {
+	var temp = Path.resolve(OS.tmpdir(), ShortId.generate());
+	Encryptor.decryptFile(src, temp, key, function(error) {
+		if (error) return ret(error);
+		TAR.extract({
+			file: temp,
+			cwd: target
+		}, ret);
+	});
+}
 
 module.exports = {
 	findFilesByMask: findFilesByMask,
@@ -125,5 +145,6 @@ module.exports = {
 	compressJS: compressJS,
 	compressHTML: compressHTML,
 	compressPNG: compressPNG,
-	// tarDirectory: tarDirectory
+	compressDir: compressDir,
+	uncompressDir: uncompressDir
 };

@@ -5,6 +5,7 @@
     "async": "latest",
     "histone": "latest",
     "file-encryptor": "latest",
-    "unirest": "latest"
+    "unirest": "latest",
+    "tar": "latest"
   }
 }
