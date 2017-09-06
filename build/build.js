@@ -12,14 +12,18 @@ function prepareDist(ret) {
 	console.info('[ PREPARE ]', 'removing', DIST_PATH);
 	FS.remove(DIST_PATH, function(error) {
 		if (error) return ret(error);
-		var modulesDir = Path.resolve(SRC_PATH, 'node_modules');
-		FS.copy(SRC_PATH, DIST_PATH, function(path) {
-			var name = Path.basename(path);
-			if (name[0] === '.') return false;
-			if (path === modulesDir) return false;
-			console.info('[ PREPARE ]', 'copying', path);
-			return true;
-		}, ret);
+		console.info('[ PREPARE ]', 'removing', TGZ_PATH);
+		FS.remove(TGZ_PATH, function(error) {
+			if (error) return ret(error);
+			var modulesDir = Path.resolve(SRC_PATH, 'node_modules');
+			FS.copy(SRC_PATH, DIST_PATH, function(path) {
+				var name = Path.basename(path);
+				if (name[0] === '.') return false;
+				if (path === modulesDir) return false;
+				console.info('[ PREPARE ]', 'copying', path);
+				return true;
+			}, ret);
+		});
 	});
 }
 
@@ -86,29 +90,30 @@ function compressTPL(callback) {
 	}, callback);
 }
 
+function makePackage(callback) {
+	console.info('[ CREATING PACKAGE ]', TGZ_PATH);
+	Utils.compressDir(DIST_PATH, TGZ_PATH, 'PASSWORD', callback);
+}
 
 
 
-Unirest.post('http://localhost:10000')
-// // unirest.post('http://127.0.0.1:9999')
-.attach('file', TGZ_PATH)
-.end(function (response) {
-    console.log(response.body);
-});
+// Unirest.post('http://localhost:10000')
+// // // unirest.post('http://127.0.0.1:9999')
+// .attach('file', TGZ_PATH)
+// .end(function (response) {
+//     console.log(response.body);
+// });
 
-return
+// return
 
 prepareDist(function() {
 	Async.each([compressCSS, compressPNG, compressTPL, compressJS], function(task, nextTask) {
 		task(nextTask);
 	}, function(error) {
+		makePackage(function(error) {
 
-		console.info('done', error);
-
-		Utils.compressDir(DIST_PATH, TGZ_PATH, 'PASSWORD', function(error) {
 			console.info('done', error);
+
 		});
-
-
 	});
 });
